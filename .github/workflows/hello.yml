@@ -1,0 +1,21 @@
+# Nadaję nazwę mojemu pierwszemu workflow, żeby łatwo go zidentyfikować na liście w GitHubie
+name: Hello Workflow
+
+# Definiuję zdarzenie (event), na które mój pipeline ma zareagować
+# Ustawiam uruchamianie na każde wypchnięcie zmian (push) do repozytorium
+on:
+  push:
+
+jobs:
+  # Tworzę moje pierwsze zadanie o nazwie hello_world_job
+  hello_world_job:
+    # Wybieram środowisko (runner), na którym uruchomi się moje zadanie
+    # Wybieram najnowszego Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # Definiuję pojedynczy krok w ramach mojego zadania
+      - name: Wyświetlenie komunikatu powitalnego
+        run: |
+          # Używam polecenia echo, aby wypisać wymagany tekst w logach konsoli
+          echo "Hello, CI/CD!"
