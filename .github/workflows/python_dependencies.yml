@@ -1,0 +1,28 @@
+# Nazywam mój workflow, aby odzwierciedlał to, co się w nim dzieje
+name: Python Dependencies
+
+on:
+  push:
+
+jobs:
+  install_deps:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Krok 1: Najpierw pobieram kod mojego repozytorium, abym miał dostęp do pliku requirements.txt
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      # Krok 2: Przygotowuję środowisko Python w wersji 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Krok 3: Instaluję zależności z pliku requirements.txt
+      - name: Instalacja zależności
+        run: |
+          # Aktualizuję menedżera pakietów pip
+          python -m pip install --upgrade pip
+          # Instaluję pakiety z mojego nowo utworzonego pliku
+          pip install -r requirements.txt
