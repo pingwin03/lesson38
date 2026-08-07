@@ -1,0 +1,28 @@
+# Nadaję nazwę, aby odróżnić ten workflow od poprzedniego
+name: Python Hello
+
+# Ponownie ustawiam wyzwalacz na push
+on:
+  push:
+
+jobs:
+  run_python:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Krok 1: Używam gotowej akcji do konfiguracji Pythona w wersji 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Krok 2: Tworzę plik Pythona z funkcją hello() bezpośrednio w systemie runnera
+      - name: Tworzenie pliku skryptu
+        run: |
+          echo 'def hello():' > hello.py
+          echo '    print("Witaj z Pythona w GitHub Actions!")' >> hello.py
+          echo 'hello()' >> hello.py
+
+      # Krok 3: Wywołuję skrypt za pomocą komendy python
+      - name: Uruchomienie skryptu Python
+        run: python hello.py
