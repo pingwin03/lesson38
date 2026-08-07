@@ -1,0 +1,38 @@
+name: Python Test with Cache
+
+on:
+  push:
+
+jobs:
+  run_tests_with_cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Dodaję krok z cachingiem zgodnie ze wskazówką z Zadania 5
+      # Dzięki temu przy kolejnych uruchomieniach GitHub użyje zapisanych paczek zamiast pobierać je od nowa
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          # Wskazuję domyślną ścieżkę, w której pip przechowuje pobrane paczki w systemach Linux (nasz runner to ubuntu)
+          path: ~/.cache/pip
+          # Tworzę unikalny klucz cache'u bazujący na systemie operacyjnym i dokładnej zawartości pliku requirements.txt
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          # Definiuję klucz zapasowy, z którego system skorzysta, jeśli nie znajdzie idealnego dopasowania
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Instalacja zależności
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Uruchomienie testów z pytest
+        run: pytest
