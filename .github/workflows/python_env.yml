@@ -1,0 +1,29 @@
+name: Python Environment Variables
+
+# Definiuję globalne zmienne środowiskowe dostępne dla wszystkich jobów w tym workflow
+env:
+  GLOBAL_APP_NAME: "Lesson38-PythonApp"
+  ENVIRONMENT: "staging"
+
+on:
+  push:
+
+jobs:
+  show_env_vars:
+    runs-on: ubuntu-latest
+
+    # Definiuję zmienne środowiskowe specyficzne dla tego konkretnego joba
+    env:
+      JOB_SPECIFIC_VAR: "TylkoDlaTehoJoba"
+
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Wyświetlenie zmiennych środowiskowych
+        run: |
+          echo "Nazwa aplikacji (globalna): $GLOBAL_APP_NAME"
+          echo "Środowisko (globalne): $ENVIRONMENT"
+          echo "Zmienna lokalna joba: $JOB_SPECIFIC_VAR"
+          echo "Wbudowana zmienna GitHub - autor commitu: ${{ github.actor }}"
+          echo "Wbudowana zmienna GitHub - nazwa repozytorium: ${{ github.repository }}"
