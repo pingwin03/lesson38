@@ -1,0 +1,73 @@
+name: Full CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # Stage 1: Lint
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalacja narzędzi lintujących
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black
+
+      - name: Uruchomienie flake8 i black
+        run: |
+          flake8 src/ --count --exit-zero
+          black --check src/
+
+  # Stage 2: Test
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalacja zależności i pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Uruchomienie testów z coverage
+        run: |
+          pytest tests/ --cov=src --cov-report=term
+
+  # Stage 3: Build
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Budowanie obrazu Docker (symulacja/build)
+        run: |
+          echo "🔨 Budowanie obrazu Docker dla aplikacji..."
+          docker build -t my-python-app:latest .
+
+  # Stage 4: Deploy
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Symulacja wdrożenia na środowisko
+        run: |
+          echo "🚀 Deploying..."
+          echo "Aplikacja została pomyślnie wdrożona na serwer produkcyjny!"
