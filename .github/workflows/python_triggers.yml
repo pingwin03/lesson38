@@ -1,0 +1,23 @@
+name: Python Triggers Workflow
+
+# Definiuję zaawansowane wyzwalacze (triggers) zgodnie z poleceniem
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run_on_triggers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Wyświetlenie informacji o wyzwalaczu
+        run: |
+          echo "Workflow został uruchomiony pomyślnie!"
+          echo "Ref: ${{ github.ref }}"
+          echo "Event: ${{ github.event_name }}"
