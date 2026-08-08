@@ -1,8 +1,6 @@
 ﻿def main():
-    print('Ok')
+    print('Aplikacja działa poprawnie')
 
 
 if __name__ == '__main__':
     main()
-
-
