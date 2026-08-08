@@ -1,0 +1,61 @@
+stages:
+  - build
+  - test
+  - deploy
+
+# Konfiguracja globalnego cache dla zależności Pythona
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Etap 1: Budowanie (Build)
+build_app:
+  stage: build
+  image: python:3.11-slim
+  script:
+    - echo "Rozpoczynam budowanie aplikacji..."
+    - python -m venv venv
+    - source venv/bin/activate
+    - python -m pip install --upgrade pip
+    - pip install build
+    - python -m build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+# Etap 2: Testy (Test)
+test_app:
+  stage: test
+  image: python:3.11-slim
+  script:
+    - echo "Uruchamiam testy aplikacji..."
+    - python -m venv venv
+    - source venv/bin/activate
+    - python -m pip install --upgrade pip
+    - pip install pytest pytest-cov
+    - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - mkdir -p reports
+    - pytest tests/ --junitxml=reports/test-results.xml --cov=src
+  artifacts:
+    name: "test-results"
+    when: always
+    paths:
+      - reports/
+    expire_in: 1 week
+
+# Etap 3: Wdrożenie (Deploy)
+deploy_app:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🚀 Deploying aplikację na środowisko docelowe..."
+    - echo "Wdrożenie zakończone sukcesem!"
+  dependencies:
+    - build_app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
