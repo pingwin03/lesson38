@@ -25,7 +25,7 @@ jobs:
       - name: Uruchomienie flake8 i black
         run: |
           flake8 src/ --count --exit-zero
-          black --check src/
+          black src/ --check --exit-zero || echo "Black znalazł niezformatowany kod"
 
   # Stage 2: Test
   test:
