@@ -1,0 +1,22 @@
+name: Python Conditional Steps
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pobranie kodu repozytorium
+        uses: actions/checkout@v4
+
+      - name: Symulacja testów
+        run: echo "Uruchamiam testy aplikacji..."
+
+      - name: Warunkowy krok wdrożenia
+        if: github.ref == 'refs/heads/main' && success()
+        run: |
+          echo "✅ Ready to deploy!"
+          echo "Wszystkie testy przeszły pomyślnie, a my znajdujemy się na branchu main."
