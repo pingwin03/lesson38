@@ -1,0 +1,35 @@
+name: 'Python Custom Test & Coverage Action'
+description: 'Automatycznie konfiguruje Pythona, instaluje zależności i uruchamia testy z pytest-cov'
+
+inputs:
+  python-version:
+    description: 'Wersja Pythona do użycia'
+    required: false
+    default: '3.11'
+
+outputs:
+  coverage-status:
+    description: 'Status wykonania testów'
+    value: ${{ steps.run-tests.outputs.status }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Instalacja zależności i narzędzi testowych
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Uruchomienie testów z pokryciem kodu (Coverage)
+      id: run-tests
+      shell: bash
+      run: |
+        pytest tests/ --cov=src --cov-report=term-missing
+        echo "status=success" >> $GITHUB_OUTPUT
